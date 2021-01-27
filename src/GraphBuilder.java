@@ -28,33 +28,51 @@ public class GraphBuilder implements Callable<Set<GoField>> {
     @Override
     public Set<GoField> call() throws ExecutionException, InterruptedException {
         // BEGIN (write your solution here) #1
-        final List<Future<Set<GoField>>> futures = new ArrayList<>();
-        final Set<GoField> children = new CopyOnWriteArraySet<>();
+        if (isCurrentFieldFinal()) {
+            Set<GoField> finalSet = new HashSet<>();
+            finalSet.add(currentField);
+            return finalSet;
+        }
 
-        final GoField newField = new GoField(currentField);
+        final List<Future<Set<GoField>>> futures = new ArrayList<>();
+        final Set<GoField> children = new HashSet<>();
+
         for (int y = 0; y < GoField.FIELD_SIZE; y++) {
             for (int x = 0; x < GoField.FIELD_SIZE; x++) {
-                if (isCurrentFieldFinal()) continue;
+                if (currentField.figures[y][x] != null) {
+                    continue;
+                }
 
+                final GoField newField = new GoField();
+                for (int i = 0; i < GoField.FIELD_SIZE; i++) {
+                    for (int j = 0; j < GoField.FIELD_SIZE; j++) {
+                        newField.figures[i][j] = currentField.figures[i][j];
+                    }
+                }
                 newField.figures[y][x] = nextFigure;
-                final GraphBuilder newGraphBuilder = new GraphBuilder(executorService, nextFigure, newField, deepLevel + 1);
 
+                final GraphBuilder newGraphBuilder = new GraphBuilder(executorService, nextFigure, newField, deepLevel + 1);
                 if (isAsync()) {
-                    final Future<Set<GoField>> future = executorService.submit(newGraphBuilder);
+                    final Future<Set<GoField>> future
+                            = executorService.submit(newGraphBuilder);
                     futures.add(future);
-//                } else {
-//                    children.addAll(newGraphBuilder.call());
+                } else {
+                    children.addAll(newGraphBuilder.call());
                 }
             }
         }
 
         if (!futures.isEmpty()) {
             for (Future<Set<GoField>> future : futures) {
-                children.addAll(future.get());
+                try {
+                    children.addAll(future.get());
+                } catch (final InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
-//
-        return children; // TODO ???
+
+        return children;
         // END #4
     }
 

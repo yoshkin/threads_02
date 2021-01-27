@@ -10,18 +10,7 @@ public class GoField {
     GoField(){} // Standard constructor
 
     // BEGIN (write your solution here) Maybe you want to write a custom field constructor?
-    GoField(final GoField goField){
-        setFigures(goField);
-    }
 
-    public void setFigures(final GoField goField) {
-        for (int y = 0; y < FIELD_SIZE; y++) {
-            for (int x = 0; x < FIELD_SIZE; x++) {
-                this.figures[y][x] = goField.figures[y][x];
-            }
-        }
-
-    }
     // END
 
     @Override//Необходимо для работы Set.
