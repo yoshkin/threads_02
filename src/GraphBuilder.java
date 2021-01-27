@@ -32,7 +32,7 @@ public class GraphBuilder implements Callable<Set<GoField>> {
     public Set<GoField> call() throws ExecutionException, InterruptedException {
         // BEGIN (write your solution here) #1
         final List<Future<Set<GoField>>> futures = new ArrayList<>();
-        final Set<Set<GoField>> children = new HashSet<>();
+        final Set<GoField> children = new HashSet<>();
 
         final GoField newField = new GoField();
         for (int y = 0; y < GoField.FIELD_SIZE; y++) {
@@ -46,18 +46,19 @@ public class GraphBuilder implements Callable<Set<GoField>> {
                     final Future<Set<GoField>> future = executorService.submit(newGraphBuilder);
                     futures.add(future);
                 } else {
-                    children.add(newGraphBuilder.call());
+                    children.addAll(newGraphBuilder.call());
                 }
             }
         }
 
-        if (!futures.isEmpty()) {
-            for (Future<Set<GoField>> future : futures) {
-                children.add(future.get());
-            }
-        }
+//        if (!futures.isEmpty()) {
+//            for (Future<Set<GoField>> future : futures) {
+//                children.add(future.get());
+////                future.get();
+//            }
+//        }
 
-//        return (Set<GoField>) new ; // TODO
+        return children; // TODO
         // END #4
     }
 

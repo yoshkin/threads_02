@@ -16,11 +16,11 @@ public class Main {
         try {
             final Set<GoField> fields = future.get(4, TimeUnit.SECONDS);
             //Uncomment the lines of code, as below, for more informative output.
-            /*int i = 1;
+            int i = 1;
             for (GoField field: fields){
                 System.out.printf("#%d  %s \n", i, field.toString());
                 i++;
-            }*/
+            }
             System.out.printf("Total %d fields\n", fields.size());
 
             if (fields.size() != 126) {
