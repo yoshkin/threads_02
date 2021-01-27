@@ -34,12 +34,11 @@ public class GraphBuilder implements Callable<Set<GoField>> {
         final List<Future<Set<GoField>>> futures = new ArrayList<>();
         final Set<GoField> children = new HashSet<>();
 
-        final GoField newField = new GoField();
+        final GoField newField = new GoField(currentField);
         for (int y = 0; y < GoField.FIELD_SIZE; y++) {
             for (int x = 0; x < GoField.FIELD_SIZE; x++) {
-                newField.figures[y][x] = currentField.figures[y][x];
-
                 if (isCurrentFieldFinal()) continue;
+                newField.figures[y][x] = nextFigure;
                 final GraphBuilder newGraphBuilder = new GraphBuilder(executorService, nextFigure, newField, deepLevel + 1);
 
                 if (isAsync()) {
@@ -51,12 +50,12 @@ public class GraphBuilder implements Callable<Set<GoField>> {
             }
         }
 
-//        if (!futures.isEmpty()) {
-//            for (Future<Set<GoField>> future : futures) {
-//                children.add(future.get());
-////                future.get();
-//            }
-//        }
+        if (!futures.isEmpty()) {
+            for (Future<Set<GoField>> future : futures) {
+                children.addAll(future.get());
+//                future.get();
+            }
+        }
 
         return children; // TODO
         // END #4

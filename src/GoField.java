@@ -6,16 +6,22 @@ public class GoField {
     static final int FIELD_SIZE = 3;
 
     final Figure[][] figures =  new Figure[FIELD_SIZE][FIELD_SIZE];
-//    private GoField goField = this;
-//    private Set<Set<GoField>> children;
 
     GoField(){} // Standard constructor
 
     // BEGIN (write your solution here) Maybe you want to write a custom field constructor?
-//    GoField(final GoField goField, final Set<Set<GoField>> children){
-//        this.goField = goField;
-//        this.children = children;
-//    }
+    GoField(final GoField goField){
+        setFigures(goField);
+    }
+
+    public void setFigures(final GoField goField) {
+        for (int y = 0; y < FIELD_SIZE; y++) {
+            for (int x = 0; x < FIELD_SIZE; x++) {
+                this.figures[y][x] = goField.figures[y][x];
+            }
+        }
+
+    }
     // END
 
     @Override//Необходимо для работы Set.
