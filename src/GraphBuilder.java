@@ -43,15 +43,12 @@ public class GraphBuilder implements Callable<Set<GoField>> {
                     continue;
                 }
 
-                final GoField newField = new GoField();
-                for (int i = 0; i < GoField.FIELD_SIZE; i++) {
-                    for (int j = 0; j < GoField.FIELD_SIZE; j++) {
-                        newField.figures[i][j] = currentField.figures[i][j];
-                    }
-                }
-                newField.figures[y][x] = nextFigure;
-
-                final GraphBuilder newGraphBuilder = new GraphBuilder(executorService, nextFigure, newField, deepLevel + 1);
+                final GraphBuilder newGraphBuilder
+                        = new GraphBuilder(
+                        executorService,
+                        nextFigure,
+                        new GoField(currentField, nextFigure, y, x),
+                        deepLevel + 1);
                 if (isAsync()) {
                     final Future<Set<GoField>> future
                             = executorService.submit(newGraphBuilder);

@@ -10,7 +10,12 @@ public class GoField {
     GoField(){} // Standard constructor
 
     // BEGIN (write your solution here) Maybe you want to write a custom field constructor?
-
+    GoField(GoField parentField, Figure inputFigure, int x, int y){
+        for (int i = 0; i < parentField.figures.length; i++) {
+            System.arraycopy(parentField.figures[i], 0, figures[i], 0, parentField.figures[i].length);
+        }
+        figures[x][y] = inputFigure;
+    }
     // END
 
     @Override//Необходимо для работы Set.
