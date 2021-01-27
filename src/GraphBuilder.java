@@ -2,10 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 public class GraphBuilder implements Callable<Set<GoField>> {
 
@@ -32,20 +29,21 @@ public class GraphBuilder implements Callable<Set<GoField>> {
     public Set<GoField> call() throws ExecutionException, InterruptedException {
         // BEGIN (write your solution here) #1
         final List<Future<Set<GoField>>> futures = new ArrayList<>();
-        final Set<GoField> children = new HashSet<>();
+        final Set<GoField> children = new CopyOnWriteArraySet<>();
 
         final GoField newField = new GoField(currentField);
         for (int y = 0; y < GoField.FIELD_SIZE; y++) {
             for (int x = 0; x < GoField.FIELD_SIZE; x++) {
                 if (isCurrentFieldFinal()) continue;
-                newField.figures[y][x] = nextFigure;
+
+                newField.figures[x][y] = nextFigure;
                 final GraphBuilder newGraphBuilder = new GraphBuilder(executorService, nextFigure, newField, deepLevel + 1);
 
                 if (isAsync()) {
                     final Future<Set<GoField>> future = executorService.submit(newGraphBuilder);
                     futures.add(future);
-                } else {
-                    children.addAll(newGraphBuilder.call());
+//                } else {
+//                    children.addAll(newGraphBuilder.call());
                 }
             }
         }
@@ -53,11 +51,10 @@ public class GraphBuilder implements Callable<Set<GoField>> {
         if (!futures.isEmpty()) {
             for (Future<Set<GoField>> future : futures) {
                 children.addAll(future.get());
-//                future.get();
             }
         }
-
-        return children; // TODO
+//
+        return children; // TODO ???
         // END #4
     }
 
