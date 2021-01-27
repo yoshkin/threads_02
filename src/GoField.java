@@ -17,7 +17,7 @@ public class GoField {
     public void setFigures(final GoField goField) {
         for (int y = 0; y < FIELD_SIZE; y++) {
             for (int x = 0; x < FIELD_SIZE; x++) {
-                this.figures[x][y] = goField.figures[x][y];
+                this.figures[y][x] = goField.figures[y][x];
             }
         }
 
